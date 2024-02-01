@@ -1,6 +1,6 @@
 SHELL:=/bin/bash -e
-.SILENT: setup-dependencies setup-act setup-jq setup-terraform
-.PHONY:  setup-dependencies setup-act setup-jq setup-terraform
+.SILENT: setup-dependencies setup-act setup-jq setup-terraform setup-trunk
+.PHONY:  setup-dependencies setup-act setup-jq setup-terraform setup-trunk
 dep_act_version:=latest
 dep_terraform_version:=1.7.2
 dep_jq:=1.7.1
@@ -15,7 +15,8 @@ setup-dependencies:
 		-j 4 \
 		setup-act \
 		setup-jq \
-		setup-terraform
+		setup-terraform \
+		setup-trunk
 setup-act:
 	cd .bin/downloads && wget -qN https://github.com/nektos/act/releases/$(dep_act_version)/download/act_$(shell uname -s)_$(shell uname -m).tar.gz
 	tar -xf .bin/downloads/act_*.tar.gz -C .bin act
@@ -34,4 +35,10 @@ setup-terraform:
 	chmod +x .bin/terraform
 	echo -n "Installed: Hashicorp/Terraform: "
 	.bin/terraform --version | head -n 1
+setup-trunk:
+	cd .bin/downloads && wget -qN https://trunk.io/releases/trunk
+	cp .bin/downloads/trunk .bin/trunk
+	chmod +x .bin/trunk
+	echo -n "Installed: Trunk.io/Trunk: "
+	.bin/trunk --version
 
