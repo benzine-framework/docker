@@ -17,6 +17,8 @@ runtimes:
     - python@3.10.8
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
+  disabled:
+    - terrascan
   enabled:
     - gitleaks@8.18.1
     - actionlint@1.6.26
@@ -28,7 +30,6 @@ lint:
     - prettier@3.2.4
     - shellcheck@0.9.0
     - shfmt@3.6.0
-    - terrascan@1.18.11
     - trivy@0.48.3
     - trufflehog@3.66.2
     - yamllint@1.33.0

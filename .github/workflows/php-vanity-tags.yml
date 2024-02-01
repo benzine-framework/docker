@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       latest-stable-version: "8.3"
-      base_tag: "benzine/php"
+      base_tag: "ghcr.io/benzine-framework/php"
     strategy:
       fail-fast: false
       matrix:

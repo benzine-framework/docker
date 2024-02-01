@@ -110,3 +110,5 @@ jobs:
             ${{ steps.build_args.outputs.result }}
           cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=.github/cache/docker' }}
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=.github/cache/docker' }}
+          build-contexts: |
+            marshall=docker-image://benzine/marshall:latest

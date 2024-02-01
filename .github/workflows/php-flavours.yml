@@ -102,3 +102,5 @@ jobs:
             ${{ steps.build_args.outputs.result }}
           cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=.github/cache/docker' }}
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=.github/cache/docker' }}
+          build-contexts: |
+            php_core=docker-image://ghcr.io/benzine-framework/php:core-${{ matrix.version }}

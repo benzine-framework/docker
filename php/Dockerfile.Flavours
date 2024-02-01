@@ -1,13 +1,7 @@
-# checkov:skip=CKV_DOCKER_3
-ARG PHP_CORE_VERSION
-# hadolint ignore=DL3024
-# checkov:skip=CKV_DOCKER_7
-# ts:skip=AC_DOCKER_0041 Ignore the nonsense about :latest, its not.
-FROM ${PHP_CORE_VERSION} AS php-cli
+FROM php_core AS php-cli
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
       org.opencontainers.image.source="https://github.com/benzine-framework/docker"
-
 
 # Install a funky cool repl.
 RUN composer global require -q psy/psysh:@stable && \
