@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu
 
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \

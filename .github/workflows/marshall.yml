@@ -21,6 +21,17 @@ jobs:
   marshall-build:
     name: "Build Marshall"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ubuntu:
+          - focal
+          - jammy
+          - lunar
+          - mantic
+          - noble
+          - devel
+          - rolling
+          - latest
     steps:
       - name: "Build: Prepare Environment Variables"
         id: environment
@@ -65,11 +76,50 @@ jobs:
           pull: true
           push: ${{ !env.ACT && true || false }}
           tags: |
-            ghcr.io/benzine-framework/marshall:latest
-            benzine/marshall:latest
+            ghcr.io/benzine-framework/marshall:${{ matrix.ubuntu }}
+            benzine/marshall:${{ matrix.ubuntu }}
           build-args: |
             MARSHALL_VERSION=${{ steps.environment.outputs.marshall_version }}
             MARSHALL_BUILD_DATE=${{ steps.environment.outputs.marshall_build_date }}
             MARSHALL_BUILD_HOST=${{ steps.environment.outputs.marshall_build_host }}
           cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=.github/cache/docker' }}
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=.github/cache/docker' }}
+          build-contexts: |
+            ubuntu=docker-image://ubuntu:${{ matrix.ubuntu }}
+
+  marshall-tag-latest:
+    name: Tag latest marshall
+    runs-on: ubuntu-latest
+    needs:
+      - marshall-build
+    env:
+      latest-stable-version: "focal"
+      base_tag: "ghcr.io/benzine-framework/marshall"
+    strategy:
+      fail-fast: false
+      matrix:
+        output_tag:
+          - "benzine/php"
+          - "gone/php"
+          - "ghcr.io/benzine-framework/php"
+    steps:
+      - name: "Setup: Login to Docker Hub"
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: "Setup: Login to GHCR"
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_PASSWORD }}
+
+      - name: "Retag ${{ env.base_tag }}:${{ env.latest-stable-version }} to ${{ matrix.output_tag }}:latest"
+        if: ${{ github.ref == 'refs/heads/main' }}
+        shell: bash
+        run: |
+          docker pull ${{ env.base_tag }}:${{ env.latest-stable-version }}
+          docker tag ${{ env.base_tag }}:${{ env.latest-stable-version }} ${{ matrix.output_tag }}:latest
+          docker push ${{ matrix.output_tag }}:latest
