@@ -100,7 +100,7 @@ jobs:
             benzine/php:${{ matrix.variant }}-${{ matrix.version }}
           build-args: |
             ${{ steps.build_args.outputs.result }}
-          cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=.github/cache/docker' }}
-          cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=.github/cache/docker' }}
+          cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=/tmp' }}
+          cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=/tmp' }}
           build-contexts: |
             php_core=docker-image://ghcr.io/benzine-framework/php:core-${{ matrix.version }}

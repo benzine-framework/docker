@@ -57,8 +57,8 @@ jobs:
             PHP_VERSION=${{ matrix.version }}
           tags: |
             matthewbaggett/laravel:${{ matrix.version }}
-          cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=.github/cache/docker' }}
-          cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=.github/cache/docker' }}
+          cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=/tmp' }}
+          cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=/tmp' }}
 
   laravel-tag-latest:
     name: "Tag: Laravel Container"
