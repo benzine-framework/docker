@@ -1,16 +1,18 @@
 name: Build mitmproxy
 
+permissions: read-all
+
 on:
   push:
     paths:
-      - 'mitmproxy/**'
+      - "mitmproxy/**"
   pull_request:
     branches:
-      - '!dependabot/**'
+      - "!dependabot/**"
   workflow_run:
     workflows:
       - Lint Docker Files
-    branches: [ 'master', 'feature/**' ]
+    branches: ["master", "feature/**"]
     types:
       - completed
   workflow_dispatch:
@@ -98,11 +100,9 @@ jobs:
             BUILD_DATE=${{ github.event.repository.pushed_at }}
           platforms: ${{ (!env.ACT && !(startsWith('6.',matrix.mitmproxy) || startsWith('5.', matrix.mitmproxy))) && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           pull: true
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: |
             ${{ !env.ACT && format('benzine/mitmproxy:{0}',matrix.mitmproxy) || '' }}
             ${{ format('ghcr.io/benzine-framework/mitmproxy:{0}', matrix.mitmproxy) }}
           cache-from: ${{ !env.ACT && 'type=gha' || '' }}
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || '' }}
-
-

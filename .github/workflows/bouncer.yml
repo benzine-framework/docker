@@ -1,24 +1,28 @@
 name: Build Nginx + LetsEncrypt Bouncer
 
+permissions: read-all
+
 on:
   push:
     paths:
-      - '.github/workflows/bouncer.yml'
-      - 'bouncer/**'
+      - .github/workflows/bouncer.yml
+      - bouncer/**
   pull_request:
     branches:
-      - '!dependabot/**'
+      - "!dependabot/**"
   workflow_run:
     workflows:
       - Build PHP Flavours
-    branches: [ 'master', 'feature/**' ]
+    branches:
+      - master
+      - feature/**
     types:
       - completed
   workflow_dispatch:
 
 jobs:
   bouncer-build:
-    name: "Bake Bouncer Container"
+    name: Bake Bouncer Container
     runs-on: ubuntu-latest
     steps:
       - name: "Setup: Get Date"
@@ -86,7 +90,7 @@ jobs:
           target: bouncer
           platforms: ${{ !env.ACT && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           pull: true
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           build-args: |
             GIT_SHA=${{ github.sha }}
             BUILD_DATE=${{ steps.date.outputs.container_build_datetime }}

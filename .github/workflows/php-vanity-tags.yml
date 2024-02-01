@@ -1,11 +1,13 @@
 name: Build PHP Vanity Tags
 
+permissions: read-all
+
 on:
   workflow_dispatch:
   workflow_run:
     workflows:
       - Build PHP Flavours
-    branches: [ 'master', 'feature/**' ]
+    branches: ["master", "feature/**"]
     types:
       - completed
 
@@ -46,4 +48,3 @@ jobs:
           docker pull ${{ env.base_tag }}:${{ matrix.variant }}-${{ env.latest-stable-version }}
           docker tag ${{ env.base_tag }}:${{ matrix.variant }}-${{ env.latest-stable-version }} ${{ matrix.output_tag }}:${{ matrix.variant }}
           docker push ${{ matrix.output_tag }}:${{ matrix.variant }}
-          

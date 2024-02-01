@@ -1,8 +1,10 @@
+# checkov:skip=CKV_DOCKER_3
 FROM benzine/php:cli-8.1 as bouncer
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
       org.opencontainers.image.source="https://github.com/benzine-framework/docker"
 
+# ts:skip=AC_DOCKER_0002 Mis-detecting usage of apt instead of apt-get
 # Install nginx, certbot
 RUN apt-get -qq update && \
     # Install pre-dependencies to use apt-key.
@@ -38,6 +40,7 @@ COPY self-signed-certificates /certs
 # Install runits for services
 COPY nginx.runit /etc/service/nginx/run
 COPY logs.runit /etc/service/nginx-logs/run
+COPY logs.finish /etc/service/nginx-logs/finish
 COPY bouncer.runit /etc/service/bouncer/run
 COPY bouncer.finish /etc/service/bouncer/finish
 COPY logs-nginx-access.runit /etc/service/logs-nginx-access/run
@@ -69,6 +72,17 @@ RUN chmod +x /app/bin/bouncer
 # Create some volumes for logs and certs
 VOLUME /etc/letsencrypt
 VOLUME /var/log/bouncer
+
+# Expose ports
+EXPOSE 80
+EXPOSE 443
+
+# Install Composer
+RUN composer install
+
+# Set a healthcheck to curl the bouncer and expect a 200
+HEALTHCHECK --start-period=30s \
+    CMD curl -s -o /dev/null -w "200" http://localhost:80/ || exit 1
 
 # stuff some envs from build
 ARG BUILD_DATE

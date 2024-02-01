@@ -7,14 +7,14 @@ services:
       target: bouncer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-#    environment:
-#      - BOUNCER_LETSENCRYPT_MODE=production
-#      - BOUNCER_LETSENCRYPT_EMAIL=matthew@baggett.me
-#      - BOUNCER_S3_ENDPOINT=http://grey.ooo:9000
-#      - BOUNCER_S3_KEY_ID=geusebio
-#      - BOUNCER_S3_KEY_SECRET=teblE0neTf2NQcVFaZIRkSF44RscyQ3G
-#      - BOUNCER_S3_BUCKET=bouncer-certificates
-#      - BOUNCER_S3_USE_PATH_STYLE_ENDPOINT="yes"
+    #    environment:
+    #      - BOUNCER_LETSENCRYPT_MODE=production
+    #      - BOUNCER_LETSENCRYPT_EMAIL=matthew@baggett.me
+    #      - BOUNCER_S3_ENDPOINT=http://grey.ooo:9000
+    #      - BOUNCER_S3_KEY_ID=geusebio
+    #      - BOUNCER_S3_KEY_SECRET=teblE0neTf2NQcVFaZIRkSF44RscyQ3G
+    #      - BOUNCER_S3_BUCKET=bouncer-certificates
+    #      - BOUNCER_S3_USE_PATH_STYLE_ENDPOINT="yes"
     ports:
       - 127.0.0.5:80:80
       - 127.0.0.5:443:443

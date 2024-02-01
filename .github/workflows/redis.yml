@@ -1,16 +1,18 @@
 name: Build Redis
 
+permissions: read-all
+
 on:
   push:
     paths:
-      - 'redis/**'
+      - "redis/**"
   pull_request:
     branches:
-      - '!dependabot/**'
+      - "!dependabot/**"
   workflow_run:
     workflows:
       - Lint Docker Files
-    branches: [ 'master', 'feature/**' ]
+    branches: ["master", "feature/**"]
     types:
       - completed
   workflow_dispatch:
@@ -83,5 +85,3 @@ jobs:
             ${{ format('ghcr.io/benzine-framework/redis:{0}', matrix.redis) }}
           cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=.github/cache/docker' }}
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=.github/cache/docker' }}
-
-

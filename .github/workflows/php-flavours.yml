@@ -1,20 +1,22 @@
 name: Build PHP Flavours
 
+permissions: read-all
+
 on:
   push:
     paths:
-      - 'php/apache/**'
-      - 'php/cli/**'
-      - 'php/nginx/**'
-      - 'php/Dockerfile.Flavours'
+      - "php/apache/**"
+      - "php/cli/**"
+      - "php/nginx/**"
+      - "php/Dockerfile.Flavours"
   pull_request:
     branches:
-      - '!dependabot/**'
+      - "!dependabot/**"
   workflow_dispatch:
   workflow_run:
     workflows:
       - Build PHP Core
-    branches: [ 'master', 'feature/**' ]
+    branches: ["master", "feature/**"]
     types:
       - completed
 
@@ -44,9 +46,11 @@ jobs:
       - name: Mangle Envs
         id: vars
         run: |
-          VERSION=$(echo "${{ matrix.version }}" | tr -d '.')
-          PACKAGE_LIST=PHP_PACKAGES_$VERSION
-          echo ::set-output name=php_packages::${!PACKAGE_LIST}
+          {
+            VERSION=$(echo "${{ matrix.version }}" | tr -d '.')
+            PACKAGE_LIST=PHP_PACKAGES_$VERSION
+            echo php_packages=${!PACKAGE_LIST}
+          } >> "$GITHUB_OUTPUT"
 
       - name: Show mangled envs
         run: |

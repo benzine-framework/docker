@@ -1,17 +1,19 @@
 name: Build MySQL Proxy
 
+permissions: read-all
+
 on:
   push:
     paths:
-      - '.github/workflows/mysql-proxy.yml'
-      - 'mysql-proxy/**'
+      - ".github/workflows/mysql-proxy.yml"
+      - "mysql-proxy/**"
   pull_request:
     branches:
-      - '!dependabot/**'
+      - "!dependabot/**"
   workflow_run:
     workflows:
       - Build PHP Flavours
-    branches: [ 'master', 'feature/**' ]
+    branches: ["master", "feature/**"]
     types:
       - completed
   workflow_dispatch:
@@ -21,7 +23,6 @@ jobs:
     name: "Build MySQL Proxy"
     runs-on: ubuntu-latest
     steps:
-
       - name: "Setup: Setup QEMU"
         uses: docker/setup-qemu-action@v2
 
@@ -58,7 +59,7 @@ jobs:
           target: mysql-proxy
           platforms: ${{ !env.ACT && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           pull: true
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: |
             ${{ !env.ACT && 'benzine/mysql-proxy:latest' || '' }}
             ${{ !env.ACT && 'ghcr.io/benzine-framework/mysql-proxy:latest' || 'ghcr.io/benzine-framework/mysql-proxy:devel' }}

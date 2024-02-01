@@ -1,12 +1,14 @@
 name: Build Octoprint
 
+permissions: read-all
+
 on:
   push:
     paths:
-      - 'octoprint/**'
+      - "octoprint/**"
   pull_request:
     branches:
-      - '!dependabot/**'
+      - "!dependabot/**"
   workflow_dispatch:
 
 jobs:
@@ -29,8 +31,9 @@ jobs:
           target: octoprint
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           pull: true
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: matthewbaggett/octoprint:latest
+
   octoprint-mjpg-build:
     name: "Bake Octoprint for yuvu cameras"
     runs-on: ubuntu-latest
@@ -50,5 +53,5 @@ jobs:
           target: octoprint-mjpg-streamer
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           pull: true
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: matthewbaggett/octoprint:mjpg-streamer-yu12

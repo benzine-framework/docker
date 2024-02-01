@@ -1,9 +1,11 @@
 name: Build Swarm Monitor
 
+permissions: read-all
+
 on:
   push:
     paths:
-      - 'swarm-monitor/**'
+      - "swarm-monitor/**"
   workflow_dispatch:
 
 jobs:
@@ -21,4 +23,3 @@ jobs:
       - name: Bake
         working-directory: swarm-monitor
         run: docker buildx bake --push
-
