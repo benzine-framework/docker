@@ -60,7 +60,7 @@ jobs:
             VERSION=$(echo "${{ matrix.version }}" | tr -d '.')
             PACKAGE_LIST=PHP_PACKAGES_$VERSION
             echo php_packages=${!PACKAGE_LIST}
-            COMPOSER_VERSION=${COMPOSER_VERSION_$VERSION:-latest-stable}
+            COMPOSER_VERSION=${COMPOSER_VERSION_$VERSION:-"latest-stable"}
             echo COMPOSER_VERSION=${!COMPOSER_VERSION}
           } >> "$GITHUB_OUTPUT"
 
