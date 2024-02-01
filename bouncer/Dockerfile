@@ -1,4 +1,5 @@
 # checkov:skip=CKV_DOCKER_3
+# ts:skip=AC_DOCKER_0047 Bug in terrascan is missing our HEALTHCHECK commands https://github.com/tenable/terrascan/issues/1546
 FROM benzine/php:cli-8.1 as bouncer
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
@@ -94,10 +95,16 @@ ENV BUILD_DATE=${BUILD_DATE} \
 
 FROM benzine/php:nginx-8.1 as test-app-a
 COPY ./test/public-web-a /app/public
+HEALTHCHECK --start-period=30s \
+    CMD curl -s -o /dev/null -w "200" http://localhost:80/ || exit 1
 
 FROM benzine/php:nginx-8.1 as test-app-b
 COPY ./test/public-web-b /app/public
+HEALTHCHECK --start-period=30s \
+    CMD curl -s -o /dev/null -w "200" http://localhost:80/ || exit 1
 
 FROM benzine/php:nginx-8.1 as test-app-c
 COPY ./test/public-web-c /app/public
+HEALTHCHECK --start-period=30s \
+    CMD curl -s -o /dev/null -w "200" http://localhost:80/ || exit 1
 
