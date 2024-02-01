@@ -5,7 +5,7 @@ LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
       org.opencontainers.image.source="https://github.com/benzine-framework/docker"
 ARG PHP_PACKAGES
-ARG COMPOSER_UPDATE_FLAGS
+ARG COMPOSER_VERSION
 ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY core/install-report.sh /usr/bin/install-report
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -52,6 +52,6 @@ RUN echo "APT::Acquire::Retries \"5\";" > /etc/apt/apt.conf.d/80-retries && \
 RUN chmod +x /usr/bin/install-report && \
     /usr/bin/install-report
 
-RUN curl https://getcomposer.org/composer-stable.phar --output /usr/local/bin/composer && \
+RUN curl https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar --output /usr/local/bin/composer && \
     chmod +x /usr/local/bin/composer /usr/bin/install-report && \
-    composer self-update ${COMPOSER_UPDATE_FLAGS}
+    composer self-update
