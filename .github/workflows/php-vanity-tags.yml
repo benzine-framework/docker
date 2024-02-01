@@ -44,6 +44,8 @@ jobs:
           password: ${{ secrets.GHCR_PASSWORD }}
 
       - name: "Retag ${{ env.base_tag }}:${{ matrix.variant }}-${{ env.latest-stable-version }} to ${{ matrix.output_tag }}:${{ matrix.variant }}"
+        if: ${{ github.ref == 'refs/heads/main' }}
+        shell: bash
         run: |
           docker pull ${{ env.base_tag }}:${{ matrix.variant }}-${{ env.latest-stable-version }}
           docker tag ${{ env.base_tag }}:${{ matrix.variant }}-${{ env.latest-stable-version }} ${{ matrix.output_tag }}:${{ matrix.variant }}
