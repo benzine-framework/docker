@@ -5,6 +5,7 @@ permissions: read-all
 on:
   push:
     paths:
+      - ".github/workflows/php-core.yml"
       - "php/core/**"
       - "php/Dockerfile.Core"
   pull_request:

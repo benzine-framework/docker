@@ -5,6 +5,7 @@ permissions: read-all
 on:
   push:
     paths:
+      - ".github/workflows/php-flavours.yml"
       - "php/apache/**"
       - "php/cli/**"
       - "php/nginx/**"
