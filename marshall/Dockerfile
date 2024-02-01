@@ -1,3 +1,4 @@
+# checkov:skip=CKV_DOCKER_7 ubuntu is just a label, and injected over the top of
 FROM ubuntu
 
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
