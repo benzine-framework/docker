@@ -61,8 +61,8 @@ jobs:
             VERSION=$(echo "${{ matrix.version }}" | tr -d '.')
             PACKAGE_LIST=PHP_PACKAGES_$VERSION
             echo php_packages=${!PACKAGE_LIST}
-            COMPOSER_VERSION=${COMPOSER_VERSION_$VERSION:-"latest-stable"}
-            echo COMPOSER_VERSION=${!COMPOSER_VERSION}
+            COMPOSER_VERSION=COMPOSER_VERSION_$VERSION
+            echo composer_version=${!COMPOSER_VERSION:-"latest-stable"}
           } >> "$GITHUB_OUTPUT"
 
       - name: Show mangled envs
@@ -75,7 +75,7 @@ jobs:
         id: build_args
         with:
           result-encoding: string
-          script: return `PHP_PACKAGES=${{ steps.vars.outputs.php_packages }}\nPHP_VERSION=${{ matrix.version }}\nPHP_CORE_VERSION=benzine/php:core-${{ matrix.version }}\nCOMPOSER_VERSION=${{ steps.vars.outputs.COMPOSER_VERSION }}`
+          script: return `PHP_PACKAGES=${{ steps.vars.outputs.php_packages }}\nPHP_VERSION=${{ matrix.version }}\nPHP_CORE_VERSION=benzine/php:core-${{ matrix.version }}\nCOMPOSER_VERSION=${{ steps.vars.outputs.composer_version }}`
 
       - uses: actions/checkout@v4
         with:
