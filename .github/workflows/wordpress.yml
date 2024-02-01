@@ -17,6 +17,10 @@ on:
       - completed
   workflow_dispatch:
 
+concurrency:
+  group: wordpress-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   wordpress-build:
     name: "Bake Wordpress Container"

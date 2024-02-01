@@ -20,6 +20,10 @@ on:
       - completed
   workflow_dispatch:
 
+concurrency:
+  group: bouncer-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   bouncer-build:
     name: Bake Bouncer Container

@@ -18,6 +18,10 @@ on:
     types:
       - completed
 
+concurrency:
+  group: php-core-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   php-core-build:
     name: "Build PHP Core"

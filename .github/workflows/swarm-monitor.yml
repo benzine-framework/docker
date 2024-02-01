@@ -8,6 +8,10 @@ on:
       - "swarm-monitor/**"
   workflow_dispatch:
 
+concurrency:
+  group: swarm-monitor-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   swarm-monitor-build:
     name: Build Swarm Monitor

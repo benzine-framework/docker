@@ -8,6 +8,10 @@ on:
   workflow_dispatch:
   push:
 
+concurrency:
+  group: lint-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     name: Lint Docker Files

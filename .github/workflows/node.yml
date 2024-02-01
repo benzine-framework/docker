@@ -17,6 +17,10 @@ on:
       - completed
   workflow_dispatch:
 
+concurrency:
+  group: nodejs-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   node-flavours-build:
     name: "Build Node Flavours"

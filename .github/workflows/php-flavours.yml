@@ -20,6 +20,10 @@ on:
     types:
       - completed
 
+concurrency:
+  group: php-flavours-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   php-flavours-build:
     name: "Build PHP Flavours"
