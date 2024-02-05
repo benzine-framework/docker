@@ -8,6 +8,11 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+  checks: write
+  issues: write
+
 jobs:
   docker-scout:
     runs-on: self-hosted

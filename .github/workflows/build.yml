@@ -12,23 +12,12 @@ concurrency:
   group: build-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+permissions: read-all
+
 jobs:
   qc:
     name: Trunk
     uses: ./.github/workflows/trunk.check.yml
-    secrets: inherit
-
-  scout:
-    strategy:
-      matrix:
-        image:
-          - "ghcr.io/benzine-framework/php:cli-8.3"
-    name: Helix Docker Scout
-    needs:
-      - build
-    uses: ./.github/workflows/code-quality.dockerscout.yml
-    with:
-      scout: ${{ matrix.image }}
     secrets: inherit
 
   marshall:
@@ -96,3 +85,29 @@ jobs:
     name: Wordpress
     uses: ./.github/workflows/wordpress.yml
     secrets: inherit
+
+  scout:
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - "ghcr.io/benzine-framework/php:cli-8.3"
+    name: Helix Docker Scout
+    needs:
+      - bouncer
+      - laravel
+      - marshall
+      - mitm-proxy
+      - mqtt
+      - mysql-proxy
+      - node
+      - php
+      - redis
+      - swarm-monitor
+      - wordpress
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Docker Scout"
+        uses: ./.github/workflows/scout.yml
+        with:
+          scout: ${{ matrix.image }}
