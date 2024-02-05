@@ -19,8 +19,7 @@ jobs:
     name: Trunk
     uses: ./.github/workflows/trunk.check.yml
     secrets: inherit
-    permissions:
-      checks: write
+    permissions: write-all
 
   marshall:
     needs: qc
