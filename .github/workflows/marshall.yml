@@ -78,9 +78,6 @@ jobs:
         with:
           context: marshall
           platforms: ${{ matrix.platform }}
-          tags: |
-            ghcr.io/benzine-framework/marshall:${{ matrix.ubuntu }}
-            benzine/marshall:${{ matrix.ubuntu }}
           build-args: |
             MARSHALL_VERSION=${{ steps.environment.outputs.marshall_version }}
             MARSHALL_BUILD_DATE=${{ steps.environment.outputs.marshall_build_date }}
@@ -147,9 +144,15 @@ jobs:
       - name: "Merge: Create ${{ matrix.ubuntu }} manifest list and push"
         working-directory: /tmp/digests
         run: |
+          pwd
+          ls -lah
+          echo "First bit: " $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          echo "Second bit: " $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
           docker buildx imagetools \
             create \
-              $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+              $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+              $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
 
       - name: "Merge: Inspect image"
         run: |
