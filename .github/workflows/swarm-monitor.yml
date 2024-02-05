@@ -3,14 +3,7 @@ name: Build Swarm Monitor
 permissions: read-all
 
 on:
-  push:
-    paths:
-      - "swarm-monitor/**"
-  workflow_dispatch:
-
-concurrency:
-  group: swarm-monitor-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   swarm-monitor-build:

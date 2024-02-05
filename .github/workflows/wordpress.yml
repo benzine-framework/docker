@@ -3,23 +3,7 @@ name: Build Wordpress Container
 permissions: read-all
 
 on:
-  push:
-    paths:
-      - "wordpress/**"
-  pull_request:
-    branches:
-      - "!dependabot/**"
-  workflow_run:
-    workflows:
-      - Build PHP Vanity Tags
-    branches: ["master", "feature/**"]
-    types:
-      - completed
-  workflow_dispatch:
-
-concurrency:
-  group: wordpress-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   wordpress-build:

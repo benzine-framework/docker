@@ -1,5 +1,5 @@
 # ts:skip=AC_DOCKER_0047 Bug in terrascan is missing our HEALTHCHECK commands https://github.com/tenable/terrascan/issues/1546
-FROM benzine/php:cli-8.2 as swarm-agent
+FROM ghcr.io/benzine-framework/php:cli-8.2 as swarm-agent
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
       org.opencontainers.image.source="https://github.com/benzine-framework/docker"
@@ -21,7 +21,7 @@ HEALTHCHECK --start-period=30s \
 # Not sure if this is working but I don't care right now.
 USER swarm-monitor
 
-FROM benzine/php:nginx-8.2 as swarm-stats
+FROM ghcr.io/benzine-framework/php:nginx-8.2 as swarm-stats
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
       org.opencontainers.image.source="https://github.com/benzine-framework/docker"

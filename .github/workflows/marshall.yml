@@ -3,29 +3,14 @@ name: Build Marshall
 permissions: read-all
 
 on:
-  push:
-    paths:
-      - "marshall/**"
-  pull_request:
-    branches:
-      - "!dependabot/**"
-  workflow_run:
-    workflows:
-      - Lint Docker Files
-    branches: ["master", "feature/**"]
-    types:
-      - completed
-  workflow_dispatch:
-
-concurrency:
-  group: marshall-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   marshall-build:
     name: "Build Marshall"
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         ubuntu:
           - focal

@@ -3,20 +3,7 @@ name: Build MySQL Proxy
 permissions: read-all
 
 on:
-  push:
-    paths:
-      - ".github/workflows/mysql-proxy.yml"
-      - "mysql-proxy/**"
-  pull_request:
-    branches:
-      - "!dependabot/**"
-  workflow_run:
-    workflows:
-      - Build PHP Flavours
-    branches: ["master", "feature/**"]
-    types:
-      - completed
-  workflow_dispatch:
+  workflow_call:
 
 concurrency:
   group: mysql-proxy-${{ github.head_ref || github.run_id }}

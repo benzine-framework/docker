@@ -1,0 +1,98 @@
+name: Build
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  qc:
+    name: Trunk
+    uses: ./.github/workflows/trunk.check.yml
+    secrets: inherit
+
+  scout:
+    strategy:
+      matrix:
+        image:
+          - "ghcr.io/benzine-framework/php:cli-8.3"
+    name: Helix Docker Scout
+    needs:
+      - build
+    uses: ./.github/workflows/code-quality.dockerscout.yml
+    with:
+      scout: ${{ matrix.image }}
+    secrets: inherit
+
+  marshall:
+    needs: qc
+    name: Marshall
+    uses: ./.github/workflows/marshall.yml
+    secrets: inherit
+
+  php:
+    needs: marshall
+    name: PHP Core
+    uses: ./.github/workflows/php.yml
+    secrets: inherit
+
+  laravel:
+    needs: php
+    name: PHP Vanity Tags
+    uses: ./.github/workflows/laravel.yml
+    secrets: inherit
+
+  bouncer:
+    needs: php
+    name: Nginx Load Balancer (Bouncer)
+    uses: ./.github/workflows/bouncer.yml
+    secrets: inherit
+
+  mitm-proxy:
+    needs: qc
+    name: Man-in-the-middle proxy
+    uses: ./.github/workflows/mitm-proxy.yml
+    secrets: inherit
+
+  mqtt:
+    needs: qc
+    name: MQTT
+    uses: ./.github/workflows/mqtt.yml
+    secrets: inherit
+
+  mysql-proxy:
+    needs: qc
+    name: MySQL Proxy
+    uses: ./.github/workflows/mysql-proxy.yml
+    secrets: inherit
+
+  node:
+    needs: qc
+    name: Node
+    uses: ./.github/workflows/node.yml
+    secrets: inherit
+
+  redis:
+    needs: qc
+    name: Redis
+    uses: ./.github/workflows/redis.yml
+    secrets: inherit
+
+  swarm-monitor:
+    needs: php
+    name: Swarm Monitor
+    uses: ./.github/workflows/swarm-monitor.yml
+    secrets: inherit
+
+  wordpress:
+    needs: php
+    name: Wordpress
+    uses: ./.github/workflows/wordpress.yml
+    secrets: inherit

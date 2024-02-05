@@ -3,17 +3,7 @@ name: Build Octoprint
 permissions: read-all
 
 on:
-  push:
-    paths:
-      - "octoprint/**"
-  pull_request:
-    branches:
-      - "!dependabot/**"
-  workflow_dispatch:
-
-concurrency:
-  group: octoprint-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   octoprint-build:

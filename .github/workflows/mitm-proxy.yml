@@ -3,23 +3,7 @@ name: Build mitmproxy
 permissions: read-all
 
 on:
-  push:
-    paths:
-      - "mitmproxy/**"
-  pull_request:
-    branches:
-      - "!dependabot/**"
-  workflow_run:
-    workflows:
-      - Lint Docker Files
-    branches: ["master", "feature/**"]
-    types:
-      - completed
-  workflow_dispatch:
-
-concurrency:
-  group: mitm-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   mitmproxy-build:

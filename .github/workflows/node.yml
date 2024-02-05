@@ -3,19 +3,7 @@ name: Build NodeJS Flavours
 permissions: read-all
 
 on:
-  push:
-    paths:
-      - "node/**"
-  pull_request:
-    branches:
-      - "!dependabot/**"
-  workflow_run:
-    workflows:
-      - Build Marshall
-    branches: ["master", "feature/**"]
-    types:
-      - completed
-  workflow_dispatch:
+  workflow_call:
 
 concurrency:
   group: nodejs-${{ github.head_ref || github.run_id }}

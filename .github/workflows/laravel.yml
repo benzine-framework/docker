@@ -3,25 +3,7 @@ name: Build Laravel Container
 permissions: read-all
 
 on:
-  push:
-    paths:
-      - laravel/**
-  pull_request:
-    branches:
-      - "!dependabot/**"
-  workflow_run:
-    workflows:
-      - Build PHP Vanity Tags
-    branches:
-      - master
-      - feature/**
-    types:
-      - completed
-  workflow_dispatch:
-
-concurrency:
-  group: laravel-${{ github.head_ref || github.run_id }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   laravel-build:
@@ -60,6 +42,8 @@ jobs:
           build-args: |
             PHP_VERSION=${{ matrix.version }}
           tags: |
+            ghcr.io/benzine-framework/laravel:php-${{ matrix.version }}
+            benzine/laravel:php-${{ matrix.version }}
             matthewbaggett/laravel:${{ matrix.version }}
           cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=/tmp' }}
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=/tmp' }}
