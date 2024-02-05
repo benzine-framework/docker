@@ -1,4 +1,5 @@
 # hadolint ignore=DL3007
+# checkov:skip=CKV_DOCKER_7 php_core is just a label, and injected over the top of
 FROM marshall AS nodejs
 
 ARG NODE_VERSION
@@ -6,7 +7,8 @@ ARG YARN_VERSION
 ARG PATH="/app/node_modules/.bin:${PATH}"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN mkdir ~/.gnupg && \
+RUN adduser -D node && \
+    mkdir ~/.gnupg && \
     echo "disable-ipv6" >> ~/.gnupg/dirmngr.conf && \
     apt-get -qq update && \
     apt-get -yqq install --no-install-recommends \
@@ -69,8 +71,16 @@ RUN mkdir ~/.gnupg && \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/lib/dpkg/status.old /var/cache/debconf/templates.dat /var/log/dpkg.log /var/log/lastlog /var/log/apt/*.log
 
+# Healthcheck is nonsensical for this container.
+HEALTHCHECK NONE
+
+# Back to userland
+USER node
+
 FROM nodejs AS nodejs-compiler
 
+# Install dependencies
+USER root
 RUN apt-get -qq update && \
     apt-get -yqq install --no-install-recommends \
         python \
@@ -79,3 +89,9 @@ RUN apt-get -qq update && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/lib/dpkg/status.old /var/cache/debconf/templates.dat /var/log/dpkg.log /var/log/lastlog /var/log/apt/*.log
+
+# Healthcheck is nonsensical for this container.
+HEALTHCHECK NONE
+
+# Back to userland
+USER node

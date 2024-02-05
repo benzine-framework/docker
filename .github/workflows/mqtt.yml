@@ -61,4 +61,4 @@ jobs:
             benzine/mqtt:${{ matrix.version }}
             ghcr.io/benzine-framework/mqtt:${{ matrix.version }}
           build-contexts: |
-            mqtt=docker://eclipse-mosquitto:${{ matrix.version }}
+            eclipse-mosquitto=docker://eclipse-mosquitto:${{ matrix.version }}

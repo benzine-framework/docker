@@ -17,6 +17,10 @@ CMD ["/app/agent"]
 HEALTHCHECK --start-period=30s \
     CMD ps aux | grep -v grep | grep "/app/agent" || exit 1
 
+# Down-privelege to swarm-monitor
+# Not sure if this is working but I don't care right now.
+USER swarm-monitor
+
 FROM benzine/php:nginx-8.2 as swarm-stats
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
@@ -29,3 +33,7 @@ RUN composer install
 # Healthcheck looking for something alive on port 80
 HEALTHCHECK --start-period=30s \
     CMD curl -s -o /dev/null -w "200" http://localhost:80/ || exit 1
+
+# Down-privelege to swarm-monitor
+# Not sure if this is working but I don't care right now.
+USER swarm-monitor

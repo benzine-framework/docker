@@ -1,5 +1,6 @@
 # checkov:skip=CKV_DOCKER_3
 # hadolint ignore=DL3007
+# checkov:skip=CKV_DOCKER_7 marshall is just a label, and injected over the top of
 FROM marshall AS php-core
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
@@ -55,3 +56,6 @@ RUN chmod +x /usr/bin/install-report && \
 RUN curl https://getcomposer.org/download/$COMPOSER_VERSION/composer.phar --output /usr/local/bin/composer && \
     chmod +x /usr/local/bin/composer /usr/bin/install-report && \
     composer self-update
+
+# Healthcheck is nonsensical for this container.
+HEALTHCHECK NONE
