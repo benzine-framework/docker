@@ -4,6 +4,7 @@ permissions: read-all
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   swarm-monitor-build:

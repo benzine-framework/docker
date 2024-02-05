@@ -1,6 +1,7 @@
 name: Code Quality Check (Trunk)
 on:
   workflow_call:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}

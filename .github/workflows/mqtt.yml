@@ -4,10 +4,11 @@ permissions: read-all
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 jobs:
   mqtt-build:
-    name: "MQTT"
+    name: "mosquitto"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -19,8 +20,8 @@ jobs:
           - 2.0.14
           - 1.6
         openssl:
-          - openssl
           - ""
+          - openssl
     steps:
       - uses: actions/checkout@v3
 
@@ -53,4 +54,4 @@ jobs:
             benzine/mqtt:${{ matrix.version }}
             ghcr.io/benzine-framework/mqtt:${{ matrix.version }}
           build-contexts: |
-            eclipse-mosquitto=docker://eclipse-mosquitto:${{ matrix.version }}
+            eclipse-mosquitto=docker-image://eclipse-mosquitto:${{ matrix.version }}
