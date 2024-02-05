@@ -6,13 +6,16 @@ on:
   workflow_call:
   workflow_dispatch:
 
+env:
+  should_push: ${{ github.ref == 'refs/heads/main' && !env.ACT }}
+
 jobs:
   redis-build:
     name: "Redis with Healthchecks"
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 15
       fail-fast: false
+      max-parallel: 15
       matrix:
         redis:
           - 3
@@ -69,9 +72,9 @@ jobs:
             redis=docker-image://redis:${{ matrix.redis }}
           platforms: ${{ !env.ACT && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           pull: true
-          push: ${{ !env.ACT && true || false }}
+          push: ${{ env.should_push }}
           tags: |
-            ${{ !env.ACT && format('benzine/redis:{0}',matrix.redis) || '' }}
             ${{ format('ghcr.io/benzine-framework/redis:{0}', matrix.redis) }}
-          cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=/tmp' }}
-          cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=/tmp' }}
+            ${{ env.should_push && format('benzine/redis:{0}',matrix.redis) || '' }}
+          cache-from: ${{ !env.ACT && 'type=gha' || '' }}
+          cache-to: ${{ !env.ACT && 'type=gha,mode=max' || '' }}
