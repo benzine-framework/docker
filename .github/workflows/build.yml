@@ -18,6 +18,14 @@ permissions:
   pull-requests: write
   statuses: write
   checks: write
+  actions: read
+  deployments: read
+  discussions: read
+  issues: read
+  pages: read
+  repository-projects: read
+  security-events: read
+  id-token: read
 
 jobs:
   qc:
