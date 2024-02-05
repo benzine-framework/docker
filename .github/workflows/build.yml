@@ -12,26 +12,15 @@ concurrency:
   group: build-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-  packages: write
-  pull-requests: write
-  statuses: write
-  checks: write
-  actions: read
-  deployments: read
-  discussions: read
-  issues: read
-  pages: read
-  repository-projects: read
-  security-events: read
-  id-token: read
+permissions: read-all
 
 jobs:
   qc:
     name: Trunk
     uses: ./.github/workflows/trunk.check.yml
     secrets: inherit
+    permissions:
+      checks: write
 
   marshall:
     needs: qc
