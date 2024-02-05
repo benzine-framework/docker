@@ -1,10 +1,16 @@
 name: Build Marshall
 
-permissions: read-all
+permissions:
+  contents: read
+  packages: write
 
 on:
   workflow_call:
   workflow_dispatch:
+
+env:
+  latest-stable-version: "focal"
+  base_tag: "ghcr.io/benzine-framework/marshall"
 
 jobs:
   marshall-build:
@@ -22,6 +28,9 @@ jobs:
           - devel
           - rolling
           - latest
+        platform:
+          - linux/amd64
+          - linux/arm64
     steps:
       - name: "Build: Prepare Environment Variables"
         id: environment
@@ -36,6 +45,11 @@ jobs:
             echo "marshall_build_host=$(hostname)"
           } >> "$GITHUB_OUTPUT"
 
+          {
+            platform=${{ matrix.platform }}
+            echo "platform_pair=${platform//\//-}" 
+          } >> "$GITHUB_ENV"
+
       - uses: actions/checkout@v4
         with:
           sparse-checkout: |
@@ -43,28 +57,27 @@ jobs:
 
       - uses: docker/setup-qemu-action@v2
 
-      - uses: docker/setup-buildx-action@v2
+      - uses: docker/setup-buildx-action@v3
 
       - name: "Setup: Login to Docker Hub"
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: "Setup: Login to GHCR"
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v5
-        name: Build & Push
+      - name: "Build: Build Marshall for ${{ matrix.ubuntu }} on ${{ matrix.platform }}"
+        uses: docker/build-push-action@v5
+        id: build
         with:
           context: marshall
-          platforms: ${{ !env.ACT && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
-          pull: true
-          push: ${{ !env.ACT && true || false }}
+          platforms: ${{ matrix.platform }}
           tags: |
             ghcr.io/benzine-framework/marshall:${{ matrix.ubuntu }}
             benzine/marshall:${{ matrix.ubuntu }}
@@ -72,19 +85,80 @@ jobs:
             MARSHALL_VERSION=${{ steps.environment.outputs.marshall_version }}
             MARSHALL_BUILD_DATE=${{ steps.environment.outputs.marshall_build_date }}
             MARSHALL_BUILD_HOST=${{ steps.environment.outputs.marshall_build_host }}
-          cache-from: type=gha,scope=marshall-${{ matrix.ubuntu }}
-          cache-to: type=gha,mode=max,scope=marshall-${{ matrix.ubuntu }}
-          build-contexts: |
-            ubuntu=docker-image://ubuntu:${{ matrix.ubuntu }}
+          #cache-from: ${{ !env.ACT && 'type=gha,scope=marshall-${{ matrix.ubuntu }}' || '' }}
+          #cache-to: ${{ !env.ACT && 'type=gha,mode=max,scope=marshall-${{ matrix.ubuntu }}' || '' }}
+          build-contexts: ubuntu=docker-image://ubuntu:${{ matrix.ubuntu }}
+          outputs: type=image,name=ghcr.io/benzine-framework/marshall,push-by-digest=true,name-canonical=true,push=true
+
+      - name: "Build: Export digest"
+        run: |
+          mkdir -p /tmp/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "/tmp/digests/${digest#sha256:}"
+
+      - name: "Sync: Upload Digest"
+        uses: actions/upload-artifact@v3
+        with:
+          name: marshall-digests-${{ matrix.ubuntu}}-${{ env.platform_pair }}
+          path: /tmp/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  marshall-merge:
+    runs-on: ubuntu-latest
+    needs: [marshall-build]
+    strategy:
+      fail-fast: false
+      matrix:
+        ubuntu:
+          - focal
+          - jammy
+          - lunar
+          - mantic
+          - noble
+          - devel
+          - rolling
+          - latest
+    steps:
+      - uses: docker/setup-buildx-action@v3
+
+      - name: "Setup: Login to Docker Hub"
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: "Setup: Login to GHCR"
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: hmarr/debug-action@v3
+
+      - name: "Merge: Download ${{ matrix.ubuntu }} digests"
+        uses: actions/download-artifact@v3
+        with:
+          path: /tmp/digests
+          pattern: marshall-digests-${{ matrix.ubuntu }}-*
+          merge-multiple: true
+
+      - name: "Merge: Create ${{ matrix.ubuntu }} manifest list and push"
+        working-directory: /tmp/digests
+        run: |
+          docker buildx imagetools \
+            create \
+              $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
+      - name: "Merge: Inspect image"
+        run: |
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
 
   marshall-tag-latest:
     name: Tag latest marshall
     runs-on: ubuntu-latest
-    needs:
-      - marshall-build
-    env:
-      latest-stable-version: "focal"
-      base_tag: "ghcr.io/benzine-framework/marshall"
+    needs: [marshall-merge]
     strategy:
       fail-fast: false
       matrix:
@@ -94,13 +168,15 @@ jobs:
           - "ghcr.io/benzine-framework/php"
     steps:
       - name: "Setup: Login to Docker Hub"
-        uses: docker/login-action@v2
+        if: ${{ ! contains(matrix.output_tag, 'ghcr.io') }}
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: "Setup: Login to GHCR"
-        uses: docker/login-action@v2
+        if: ${{ contains(matrix.output_tag, 'ghcr.io') }}
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
