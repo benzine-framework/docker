@@ -1,8 +1,0 @@
----
-extends: relaxed
-rules:
-  empty-values:
-    ignore:
-      - .github/workflows/*.yml
-  document-start: disable
-  line-length: disable
