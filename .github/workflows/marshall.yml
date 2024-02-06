@@ -93,10 +93,10 @@ jobs:
           digest="${{ steps.build.outputs.digest }}"
           touch "/tmp/digests/${digest#sha256:}"
 
-      - name: "Sync: Upload Digest"
+      - name: "Build: Upload digest"
         uses: actions/upload-artifact@v3
         with:
-          name: marshall-digests-${{ matrix.ubuntu}}-${{ env.platform_pair }}
+          name: digests-${{ matrix.ubuntu }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -140,12 +140,11 @@ jobs:
 
       - uses: hmarr/debug-action@v3
 
-      - name: "Merge: Download ${{ matrix.ubuntu }} digests"
+      - name: "Setup: Download ${{ matrix.ubuntu }} digests"
         uses: actions/download-artifact@v3
         with:
           path: /tmp/digests
-          pattern: marshall-digests-${{ matrix.ubuntu }}-*
-          merge-multiple: true
+          name: digests-${{ matrix.ubuntu }}
 
       - name: "Merge: Create ${{ matrix.ubuntu }} manifest list and push"
         working-directory: /tmp/digests
