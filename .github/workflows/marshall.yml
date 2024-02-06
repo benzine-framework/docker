@@ -201,9 +201,9 @@ jobs:
       fail-fast: false
       matrix:
         output_tag:
-          - "benzine/php"
-          - "gone/php"
-          - "ghcr.io/benzine-framework/php"
+          - "benzine/marshall"
+          - "gone/marshall"
+          - "ghcr.io/benzine-framework/marshall"
     steps:
       - name: "Setup: Login to Docker Hub"
         uses: docker/login-action@v3
@@ -217,6 +217,13 @@ jobs:
           registry: ghcr.io
           username: matthewbaggett
           password: ${{ secrets.GHCR_PASSWORD }}
+
+      - name: "Retag ${{ env.base_tag }}:${{ env.latest-stable-version }} to ${{ matrix.output_tag }}:bleeding"
+        shell: bash
+        run: |
+          docker pull ${{ env.base_tag }}:${{ env.latest-stable-version }}
+          docker tag ${{ env.base_tag }}:${{ env.latest-stable-version }} ${{ matrix.output_tag }}:bleeding
+          docker push ${{ matrix.output_tag }}:bleeding
 
       - name: "Retag ${{ env.base_tag }}:${{ env.latest-stable-version }} to ${{ matrix.output_tag }}:latest"
         if: ${{ github.ref == 'refs/heads/main' }}

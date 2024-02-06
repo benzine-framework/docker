@@ -63,7 +63,7 @@ jobs:
         id: build_args
         with:
           result-encoding: string
-          script: return `PHP_PACKAGES=${{ steps.vars.outputs.php_packages }}\nPHP_VERSION=${{ matrix.version }}\nPHP_CORE_VERSION=benzine/php:core-${{ matrix.version }}\nCOMPOSER_VERSION=${{ steps.vars.outputs.composer_version }}`
+          script: return `PHP_PACKAGES=${{ steps.vars.outputs.php_packages }}\nPHP_VERSION=${{ matrix.version }}\nCOMPOSER_VERSION=${{ steps.vars.outputs.composer_version }}`
 
       - uses: actions/checkout@v4
         with:
@@ -104,7 +104,7 @@ jobs:
           cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=/tmp' }}
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=/tmp' }}
           build-contexts: |
-            marshall:build=docker-image://benzine/marshall:latest
+            marshall:build=docker-image://ghcr.io/benzine-framework/marshall:latest
   php-flavours-build:
     name: "Build PHP Flavours"
     runs-on: ubuntu-latest
@@ -147,7 +147,7 @@ jobs:
         id: build_args
         with:
           result-encoding: string
-          script: return `PHP_VERSION=${{ matrix.version }}\nPHP_CORE_VERSION=benzine/php:core-${{ matrix.version }}`
+          script: return `PHP_VERSION=${{ matrix.version }}
 
       - uses: actions/checkout@v4
         with:

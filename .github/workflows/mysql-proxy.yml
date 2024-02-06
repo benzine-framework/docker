@@ -59,5 +59,7 @@ jobs:
           tags: |
             ${{ !env.ACT && 'benzine/mysql-proxy:latest' || '' }}
             ${{ !env.ACT && 'ghcr.io/benzine-framework/mysql-proxy:latest' || 'ghcr.io/benzine-framework/mysql-proxy:devel' }}
-          cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=/tmp' }}
-          cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=/tmp' }}
+          cache-from: ${{ !env.ACT && 'type=gha' || '' }}
+          cache-to: ${{ !env.ACT && 'type=gha,mode=max' || '' }}
+          build-contexts: |
+            marshall:version=docker-image://ghcr.io/benzine-framework/marshall:latest

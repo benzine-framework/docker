@@ -85,7 +85,7 @@ jobs:
         with:
           context: mitm-proxy
           build-contexts: |
-            mitmproxy/mitmproxy=docker-image://mitmproxy/mitmproxy:${{ matrix.mitmproxy }}
+            mitmproxy:version=docker-image://mitmproxy/mitmproxy:${{ matrix.mitmproxy }}
           build-args: |
             MITMPROXY_VERSION=${{ matrix.mitmproxy }}
             GIT_SHA=${{ github.sha }}

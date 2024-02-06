@@ -1,4 +1,4 @@
-FROM benzine/marshall:latest AS mysql-proxy
+FROM marshall:version AS mysql-proxy
 
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
@@ -15,7 +15,7 @@ RUN adduser mysql && \
       wget \
       mysql-client \
     && \
-    wget https://downloads.mysql.com/archives/get/p/21/file/$MYSQL_PROXY_TAR_NAME.tar.gz && \
+    wget -q https://downloads.mysql.com/archives/get/p/21/file/$MYSQL_PROXY_TAR_NAME.tar.gz && \
     tar -xzvf $MYSQL_PROXY_TAR_NAME.tar.gz && \
     mv $MYSQL_PROXY_TAR_NAME /opt/mysql-proxy && \
     rm $MYSQL_PROXY_TAR_NAME.tar.gz && \

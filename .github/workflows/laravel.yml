@@ -52,6 +52,8 @@ jobs:
             matthewbaggett/laravel:${{ matrix.version }}
           cache-from: ${{ !env.ACT && 'type=gha' || 'type=local,src=/tmp' }}
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=/tmp' }}
+          build-contexts: |
+            php:nginx=docker-image://ghcr.io/benzine-framework/php:nginx-8.2
 
   laravel-tag-latest:
     name: "Tag: Laravel Container"
