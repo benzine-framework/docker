@@ -1,4 +1,4 @@
-# From upstream redis
+# From upstream mitmproxy
 # hadolint ignore=DL3007
 FROM mitmproxy/mitmproxy
 ARG BUILD_DATE

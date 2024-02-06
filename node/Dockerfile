@@ -5,7 +5,7 @@ ARG YARN_VERSION
 ARG PATH="/app/node_modules/.bin:${PATH}"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN adduser -D node && \
+RUN adduser node && \
     mkdir ~/.gnupg && \
     echo "disable-ipv6" >> ~/.gnupg/dirmngr.conf && \
     apt-get -qq update && \

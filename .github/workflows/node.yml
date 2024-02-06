@@ -17,7 +17,7 @@ env:
 
 jobs:
   node-flavours-build:
-    name: "Build Node Flavours"
+    name: "Build"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

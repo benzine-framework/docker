@@ -33,3 +33,5 @@ jobs:
           push: ${{ env.should_push && !env.ACT }}
           tags: |
             matthewbaggett/wordpress
+          build-contexts: |
+            php:nginx=docker-image://ghcr.io/benzine-framework/php:nginx-8.2

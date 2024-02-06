@@ -59,7 +59,7 @@ jobs:
 
   mitm-proxy:
     needs: qc
-    name: Man-in-the-middle proxy
+    name: Man-in-the-middle proxy w/Healthchecks
     uses: ./.github/workflows/mitm-proxy.yml
     secrets: inherit
     permissions:
@@ -68,7 +68,7 @@ jobs:
 
   mqtt:
     needs: qc
-    name: MQTT
+    name: MQTT w/Healthchecks
     uses: ./.github/workflows/mqtt.yml
     secrets: inherit
     permissions:
@@ -85,7 +85,7 @@ jobs:
       packages: write
 
   node:
-    needs: qc
+    needs: marshall
     name: Node
     uses: ./.github/workflows/node.yml
     secrets: inherit
@@ -95,7 +95,7 @@ jobs:
 
   redis:
     needs: qc
-    name: Redis
+    name: Redis w/Healthchecks
     uses: ./.github/workflows/redis.yml
     secrets: inherit
     permissions:

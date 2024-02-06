@@ -13,7 +13,7 @@ env:
 
 jobs:
   redis-build:
-    name: "Redis with Healthchecks"
+    name: "Build"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

@@ -26,7 +26,7 @@ jobs:
           - 1.6
         openssl:
           - ""
-          - openssl
+          - "-openssl"
     steps:
       - uses: actions/checkout@v3
 
@@ -47,7 +47,7 @@ jobs:
           username: matthewbaggett
           password: ${{ secrets.GHCR_PASSWORD }}
 
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v4
         name: Build & Push
         with:
           context: mqtt
@@ -55,8 +55,8 @@ jobs:
           pull: true
           push: ${{ env.should_push && !env.ACT }}
           tags: |
-            gone/mqtt:${{ matrix.version }}
-            benzine/mqtt:${{ matrix.version }}
-            ghcr.io/benzine-framework/mqtt:${{ matrix.version }}
+            gone/mqtt:${{ matrix.version }}${{ matrix.openssl }}
+            benzine/mqtt:${{ matrix.version }}${{ matrix.openssl }}
+            ghcr.io/benzine-framework/mqtt:${{ matrix.version }}${{ matrix.openssl }}
           build-contexts: |
-            eclipse-mosquitto:injected-version=docker-image://eclipse-mosquitto:${{ matrix.version }}
+            eclipse-mosquitto:injected-version=docker-image://eclipse-mosquitto:${{ matrix.version }}${{ matrix.openssl }}
