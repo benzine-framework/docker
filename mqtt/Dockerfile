@@ -1,5 +1,4 @@
-# checkov:skip=CKV_DOCKER_7 eclipse-mosquitto is just a label, and injected over the top of
-FROM eclipse-mosquitto
+FROM eclipse-mosquitto:injected-version
 
 COPY mosquitto.conf /mosquitto/config/mosquitto.conf
 

@@ -47,7 +47,7 @@ jobs:
 
           {
             platform=${{ matrix.platform }}
-            echo "platform_pair=${platform//\//-}" 
+            echo "platform_pair=${platform//\//-}"
           } >> "$GITHUB_ENV"
 
       - uses: actions/checkout@v4
@@ -84,7 +84,7 @@ jobs:
             MARSHALL_BUILD_HOST=${{ steps.environment.outputs.marshall_build_host }}
           #cache-from: ${{ !env.ACT && 'type=gha,scope=marshall-${{ matrix.ubuntu }}' || '' }}
           #cache-to: ${{ !env.ACT && 'type=gha,mode=max,scope=marshall-${{ matrix.ubuntu }}' || '' }}
-          build-contexts: ubuntu=docker-image://ubuntu:${{ matrix.ubuntu }}
+          build-contexts: ubuntu:version=docker-image://ubuntu:${{ matrix.ubuntu }}
           outputs: type=image,name=marshall-${{matrix.ubuntu}}-${{matrix.platform}}
 
       - name: "Build: Export digest"

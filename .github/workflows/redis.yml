@@ -70,7 +70,9 @@ jobs:
         with:
           context: redis
           build-contexts: |
-            redis=docker-image://redis:${{ matrix.redis }}
+            redis:version=docker-image://redis:${{ matrix.redis }}
+          build-args: |
+            HEALTH_INTERVAL=10s
           platforms: ${{ !env.ACT && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           pull: true
           push: ${{ env.should_push && !env.ACT }}

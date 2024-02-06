@@ -1,6 +1,5 @@
 # checkov:skip=CKV_DOCKER_3 user cannot be determined at this stage.
-# checkov:skip=CKV_DOCKER_7 ubuntu is just a label, and injected over the top of
-FROM ubuntu
+FROM ubuntu:version
 
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \

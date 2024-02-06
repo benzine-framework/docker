@@ -1,5 +1,4 @@
-# ts:skip=AC_DOCKER_0047 Bug in terrascan is missing our HEALTHCHECK commands https://github.com/tenable/terrascan/issues/1546
-FROM ghcr.io/benzine-framework/php:cli-8.2 as swarm-agent
+FROM php:cli as swarm-agent
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
       org.opencontainers.image.source="https://github.com/benzine-framework/docker"

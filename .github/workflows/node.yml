@@ -64,4 +64,4 @@ jobs:
             NODE_VERSION=${{ matrix.node }}
             YARN_VERSION=${{ matrix.yarn }}
           build-contexts: |
-            marshall=docker-image://benzine/marshall:latest
+            marshall:build=docker-image://benzine/marshall:latest

@@ -1,6 +1,4 @@
-# hadolint ignore=DL3007
-# checkov:skip=CKV_DOCKER_7 php_core is just a label, and injected over the top of
-FROM marshall AS nodejs
+FROM marshall:build AS nodejs
 
 ARG NODE_VERSION
 ARG YARN_VERSION
