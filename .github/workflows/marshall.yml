@@ -218,17 +218,17 @@ jobs:
           username: matthewbaggett
           password: ${{ secrets.GHCR_PASSWORD }}
 
-      - name: "Retag ${{ env.base_tag }}:${{ env.latest-stable-version }} to ${{ matrix.output_tag }}:bleeding"
+      - name: "Retag ${{ env.ghcr_image }}:${{ env.latest-stable-version }} to ${{ matrix.output_tag }}:bleeding"
         shell: bash
         run: |
-          docker pull ${{ env.base_tag }}:${{ env.latest-stable-version }}
-          docker tag ${{ env.base_tag }}:${{ env.latest-stable-version }} ${{ matrix.output_tag }}:bleeding
+          docker pull ${{ env.ghcr_image }}:${{ env.latest-stable-version }}
+          docker tag ${{ env.ghcr_image }}:${{ env.latest-stable-version }} ${{ matrix.output_tag }}:bleeding
           docker push ${{ matrix.output_tag }}:bleeding
 
-      - name: "Retag ${{ env.base_tag }}:${{ env.latest-stable-version }} to ${{ matrix.output_tag }}:latest"
+      - name: "Retag ${{ env.ghcr_image }}:${{ env.latest-stable-version }} to ${{ matrix.output_tag }}:latest"
         if: ${{ github.ref == 'refs/heads/main' }}
         shell: bash
         run: |
-          docker pull ${{ env.base_tag }}:${{ env.latest-stable-version }}
-          docker tag ${{ env.base_tag }}:${{ env.latest-stable-version }} ${{ matrix.output_tag }}:latest
+          docker pull ${{ env.ghcr_image }}:${{ env.latest-stable-version }}
+          docker tag ${{ env.ghcr_image }}:${{ env.latest-stable-version }} ${{ matrix.output_tag }}:latest
           docker push ${{ matrix.output_tag }}:latest
