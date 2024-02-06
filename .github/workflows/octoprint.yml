@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  should_push: ${{ github.ref == 'refs/heads/main' && !env.ACT }}
+  should_push: ${{ github.ref == 'refs/heads/main' }}
 
 jobs:
   octoprint-build:
@@ -29,7 +29,7 @@ jobs:
           target: octoprint
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           pull: true
-          push: ${{ env.should_push }}
+          push: ${{ env.should_push && !env.ACT }}
           tags: matthewbaggett/octoprint:latest
 
   octoprint-mjpg-build:
@@ -51,5 +51,5 @@ jobs:
           target: octoprint-mjpg-streamer
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           pull: true
-          push: ${{ env.should_push }}
+          push: ${{ env.should_push && !env.ACT }}
           tags: matthewbaggett/octoprint:mjpg-streamer-yu12
