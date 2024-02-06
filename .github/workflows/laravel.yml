@@ -1,7 +1,8 @@
 name: Build Laravel Container
 
-permissions: read-all
-
+permissions:
+  contents: read
+  packages: write
 on:
   workflow_call:
   workflow_dispatch:

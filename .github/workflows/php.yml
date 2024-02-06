@@ -1,10 +1,12 @@
 name: Build PHP Core
 
-permissions: read-all
-
 on:
   workflow_call:
   workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
 
 env:
   should_push: ${{ github.ref == 'refs/heads/main' }}

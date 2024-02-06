@@ -1,6 +1,8 @@
 name: Build mitmproxy
 
-permissions: read-all
+permissions:
+  contents: read
+  packages: write
 
 on:
   workflow_call:
