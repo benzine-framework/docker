@@ -16,7 +16,6 @@ LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
 RUN os=$(grep "^ID=" < /etc/os-release | cut -f2 -d'=') && \
     echo "OS: $os" && \
     if [ "$os" = "debian" ] || [ "$os" = "ubuntu" ]; then \
-        adduser mitmproxy && \
         apt-get update -yqq && \
         apt-get install -yqq --no-install-recommends \
             curl \
@@ -26,7 +25,6 @@ RUN os=$(grep "^ID=" < /etc/os-release | cut -f2 -d'=') && \
         apt-get autoclean && \
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/lib/dpkg/status.old /var/cache/debconf/templates.dat /var/log/dpkg.log /var/log/lastlog /var/log/apt/*.log; \
     elif [ "$os" = "alpine" ]; then \
-        adduser -D mitmproxy && \
         apk add \
           --update \
           --no-cache \
