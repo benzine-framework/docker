@@ -10,7 +10,8 @@ on:
 
 env:
   latest-stable-version: "focal"
-  base_tag: "ghcr.io/benzine-framework/marshall"
+  ghcr_image: "ghcr.io/benzine-framework/marshall"
+  docker_hub_image: "benzine/marshall"
 
 jobs:
   marshall-build:
@@ -72,20 +73,38 @@ jobs:
           username: matthewbaggett
           password: ${{ secrets.GHCR_PASSWORD }}
 
+      - name: "Setup: Docker meta"
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.ghcr_image }}
+            ${{ env.docker_hub_image }}
+          labels: |
+            org.opencontainers.image.title=Marshall
+            org.opencontainers.image.description=Multi-thread (marshalling..) docker base image built atop Ubuntu ${{ matrix.ubuntu }} & Runit
+            org.opencontainers.image.vendor=Matthew Baggett
+          flavor: |
+            latest=auto
+          tags: |
+            ${{ matrix.ubuntu }}
+
       - name: "Build: Build Marshall for ${{ matrix.ubuntu }} on ${{ matrix.platform }}"
         uses: docker/build-push-action@v5
         id: build
         with:
           context: marshall
           platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             MARSHALL_VERSION=${{ steps.environment.outputs.marshall_version }}
             MARSHALL_BUILD_DATE=${{ steps.environment.outputs.marshall_build_date }}
             MARSHALL_BUILD_HOST=${{ steps.environment.outputs.marshall_build_host }}
-          #cache-from: ${{ !env.ACT && 'type=gha,scope=marshall-${{ matrix.ubuntu }}' || '' }}
-          #cache-to: ${{ !env.ACT && 'type=gha,mode=max,scope=marshall-${{ matrix.ubuntu }}' || '' }}
+          cache-from: ${{ !env.ACT && 'type=gha,scope=marshall-${{ matrix.ubuntu }}' || '' }}
+          cache-to: ${{ !env.ACT && 'type=gha,mode=max,scope=marshall-${{ matrix.ubuntu }}' || '' }}
           build-contexts: ubuntu:version=docker-image://ubuntu:${{ matrix.ubuntu }}
-          outputs: type=image,name=marshall-${{matrix.ubuntu}}-${{matrix.platform}}
+          outputs: |
+            type=image,name=${{ env.ghcr_image }},push-by-digest=true,name-canonical=true,push=true
 
       - name: "Build: Export digest"
         run: |
@@ -136,7 +155,17 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.base_tag }}
+          images: |
+            ${{ env.ghcr_image }}
+            ${{ env.docker_hub_image }}
+          labels: |
+            org.opencontainers.image.title=Marshall
+            org.opencontainers.image.description=Multi-thread (marshalling..) docker base image built atop Ubuntu ${{ matrix.ubuntu }} & Runit
+            org.opencontainers.image.vendor=Matthew Baggett
+          flavor: |
+            latest=auto
+          tags: |
+            ${{ matrix.ubuntu }}
 
       - uses: hmarr/debug-action@v3
 
@@ -148,20 +177,20 @@ jobs:
 
       - name: "Merge: Create ${{ matrix.ubuntu }} manifest list and push"
         working-directory: /tmp/digests
+        shell: bash
         run: |
+          set -o xtrace
           pwd
           ls -lah
-          echo "First bit: " $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
-          echo "Second bit: " $(printf '${{ env.base_image }}@sha256:%s ' *)
 
           docker buildx imagetools \
             create \
               $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-              $(printf '${{ env.base_image }}@sha256:%s ' *)
+              $(printf '${{ env.ghcr_image }}@sha256:%s ' *)
 
       - name: "Merge: Inspect image"
         run: |
-          docker buildx imagetools inspect ${{ env.base_image }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.ghcr_image }}:${{ steps.meta.outputs.version }}
 
   marshall-tag-latest:
     name: Tag latest marshall
