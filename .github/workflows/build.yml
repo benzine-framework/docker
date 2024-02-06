@@ -26,6 +26,8 @@ jobs:
     name: Marshall
     uses: ./.github/workflows/marshall.yml
     secrets: inherit
+    permissions:
+      packages: write
 
   php:
     needs: marshall

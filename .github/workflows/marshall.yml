@@ -62,15 +62,15 @@ jobs:
       - name: "Setup: Login to Docker Hub"
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          username: matthewbaggett
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: "Setup: Login to GHCR"
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: matthewbaggett
+          password: ${{ secrets.GHCR_PASSWORD }}
 
       - name: "Build: Build Marshall for ${{ matrix.ubuntu }} on ${{ matrix.platform }}"
         uses: docker/build-push-action@v5
@@ -85,7 +85,7 @@ jobs:
           #cache-from: ${{ !env.ACT && 'type=gha,scope=marshall-${{ matrix.ubuntu }}' || '' }}
           #cache-to: ${{ !env.ACT && 'type=gha,mode=max,scope=marshall-${{ matrix.ubuntu }}' || '' }}
           build-contexts: ubuntu=docker-image://ubuntu:${{ matrix.ubuntu }}
-          outputs: type=image,name=ghcr.io/benzine-framework/marshall,push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,name=marshall-${{matrix.ubuntu}}-${{matrix.platform}}
 
       - name: "Build: Export digest"
         run: |
@@ -122,15 +122,21 @@ jobs:
       - name: "Setup: Login to Docker Hub"
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          username: matthewbaggett
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: "Setup: Login to GHCR"
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: matthewbaggett
+          password: ${{ secrets.GHCR_PASSWORD }}
+
+      - name: "Merge: Docker meta"
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.base_tag }}
 
       - uses: hmarr/debug-action@v3
 
@@ -147,16 +153,16 @@ jobs:
           pwd
           ls -lah
           echo "First bit: " $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON")
-          echo "Second bit: " $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+          echo "Second bit: " $(printf '${{ env.base_image }}@sha256:%s ' *)
 
           docker buildx imagetools \
             create \
               $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-              $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+              $(printf '${{ env.base_image }}@sha256:%s ' *)
 
       - name: "Merge: Inspect image"
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.base_image }}:${{ steps.meta.outputs.version }}
 
   marshall-tag-latest:
     name: Tag latest marshall
@@ -171,19 +177,17 @@ jobs:
           - "ghcr.io/benzine-framework/php"
     steps:
       - name: "Setup: Login to Docker Hub"
-        if: ${{ ! contains(matrix.output_tag, 'ghcr.io') }}
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          username: matthewbaggett
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: "Setup: Login to GHCR"
-        if: ${{ contains(matrix.output_tag, 'ghcr.io') }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: matthewbaggett
+          password: ${{ secrets.GHCR_PASSWORD }}
 
       - name: "Retag ${{ env.base_tag }}:${{ env.latest-stable-version }} to ${{ matrix.output_tag }}:latest"
         if: ${{ github.ref == 'refs/heads/main' }}

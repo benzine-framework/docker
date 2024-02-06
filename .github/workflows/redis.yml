@@ -51,18 +51,17 @@ jobs:
             redis
 
       - name: "Setup: Login to Docker Hub"
-        if: ${{ !env.ACT }}
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          username: matthewbaggett
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: "Setup: Login to GHCR"
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: matthewbaggett
+          password: ${{ secrets.GHCR_PASSWORD }}
 
       - name: "Build: Build Redis with Healthchecks"
         uses: docker/build-push-action@v5
