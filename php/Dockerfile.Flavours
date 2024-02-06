@@ -1,10 +1,8 @@
-# checkov:skip=CKV_DOCKER_7 php-core:build is just a label, and injected over the top of
+# checkov:skip=CKV_DOCKER_3 user cannot be determined at this stage.
 FROM php-core:build AS php-cli
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
       org.opencontainers.image.source="https://github.com/benzine-framework/docker"
-
-RUN adduser -D app
 
 # Install a funky cool repl.
 RUN composer global require -q psy/psysh:@stable && \
@@ -14,10 +12,10 @@ RUN composer global require -q psy/psysh:@stable && \
 
 COPY cli/psysh-config.php /root/.config/psysh/config.php
 
-USER app
 RUN composer --version && \
     repl --version
 
+# checkov:skip=CKV_DOCKER_3 user cannot be determined at this stage.
 FROM php-cli AS php-nginx
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
@@ -26,7 +24,6 @@ ARG PHP_VERSION
 ARG PHP_MEMORY_LIMIT=128M
 ARG PHP_DATA_MAX_SIZE=1024M
 ENV PHPFPM_MAX_CHILDREN=25
-USER root
 COPY nginx /conf
 COPY self-signed-certificates /certs
 
@@ -139,14 +136,12 @@ VOLUME /etc/letsencrypt
 HEALTHCHECK --interval=30s --timeout=3s \
     CMD curl -f http://localhost/ || exit 1
 
-USER app
-
+# checkov:skip=CKV_DOCKER_3 user cannot be determined at this stage.
 FROM php-cli AS php-apache
 LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
       org.label-schema.vcs-url="https://github.com/benzine-framework/docker" \
       org.opencontainers.image.source="https://github.com/benzine-framework/docker"
 ARG PHP_VERSION
-USER root
 # ts:skip=AC_DOCKER_0002 Mis-detecting usage of apt instead of apt-get
 RUN apt-get -qq update && \
     apt-get -yqq install --no-install-recommends \
@@ -184,5 +179,3 @@ RUN rm -fr /var/www/html && \
     chmod +x /etc/service/*/run && \
     rm -Rf /conf && \
     a2enmod rewrite
-
-USER app
