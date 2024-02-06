@@ -27,6 +27,7 @@ jobs:
     uses: ./.github/workflows/marshall.yml
     secrets: inherit
     permissions:
+      contents: read
       packages: write
 
   php:
@@ -34,60 +35,90 @@ jobs:
     name: PHP Core
     uses: ./.github/workflows/php.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   laravel:
     needs: php
     name: PHP Vanity Tags
     uses: ./.github/workflows/laravel.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   bouncer:
     needs: php
     name: Nginx Load Balancer (Bouncer)
     uses: ./.github/workflows/bouncer.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   mitm-proxy:
     needs: qc
     name: Man-in-the-middle proxy
     uses: ./.github/workflows/mitm-proxy.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   mqtt:
     needs: qc
     name: MQTT
     uses: ./.github/workflows/mqtt.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   mysql-proxy:
     needs: qc
     name: MySQL Proxy
     uses: ./.github/workflows/mysql-proxy.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   node:
     needs: qc
     name: Node
     uses: ./.github/workflows/node.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   redis:
     needs: qc
     name: Redis
     uses: ./.github/workflows/redis.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   swarm-monitor:
     needs: php
     name: Swarm Monitor
     uses: ./.github/workflows/swarm-monitor.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   wordpress:
     needs: php
     name: Wordpress
     uses: ./.github/workflows/wordpress.yml
     secrets: inherit
+    permissions:
+      contents: read
+      packages: write
 
   scout:
     strategy:
@@ -96,6 +127,8 @@ jobs:
         image:
           - "ghcr.io/benzine-framework/php:cli-8.3"
     name: Helix Docker Scout
+    permissions:
+      contents: read # For repo checkout
     needs:
       - bouncer
       - laravel
