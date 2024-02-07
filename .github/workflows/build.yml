@@ -15,14 +15,14 @@ concurrency:
 permissions: read-all
 
 jobs:
-  qc:
-    name: Trunk
+  qc-before:
+    name: QC Trunk
     uses: ./.github/workflows/trunk.check.yml
     secrets: inherit
     permissions: write-all
 
   marshall:
-    needs: qc
+    needs: qc-before
     name: Marshall
     uses: ./.github/workflows/marshall.yml
     secrets: inherit
@@ -58,7 +58,7 @@ jobs:
       packages: write
 
   mitm-proxy:
-    needs: qc
+    needs: qc-before
     name: Man-in-the-middle proxy w/Healthchecks
     uses: ./.github/workflows/mitm-proxy.yml
     secrets: inherit
@@ -67,7 +67,7 @@ jobs:
       packages: write
 
   mqtt:
-    needs: qc
+    needs: qc-before
     name: MQTT w/Healthchecks
     uses: ./.github/workflows/mqtt.yml
     secrets: inherit
@@ -76,7 +76,7 @@ jobs:
       packages: write
 
   mysql-proxy:
-    needs: qc
+    needs: qc-before
     name: MySQL Proxy
     uses: ./.github/workflows/mysql-proxy.yml
     secrets: inherit
@@ -94,7 +94,7 @@ jobs:
   #    packages: write
 
   redis:
-    needs: qc
+    needs: qc-before
     name: Redis w/Healthchecks
     uses: ./.github/workflows/redis.yml
     secrets: inherit
@@ -119,31 +119,3 @@ jobs:
     permissions:
       contents: read
       packages: write
-
-  scout:
-    strategy:
-      fail-fast: false
-      matrix:
-        image:
-          - "ghcr.io/benzine-framework/php:cli-8.3"
-    name: Helix Docker Scout
-    permissions:
-      contents: read # For repo checkout
-    needs:
-      - bouncer
-      #- laravel
-      - marshall
-      - mitm-proxy
-      - mqtt
-      - mysql-proxy
-      #- node
-      - php
-      - redis
-      - swarm-monitor
-      - wordpress
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Docker Scout"
-        uses: ./.github/workflows/scout.yml
-        with:
-          scout: ${{ matrix.image }}
