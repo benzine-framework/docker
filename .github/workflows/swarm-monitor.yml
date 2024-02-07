@@ -8,6 +8,9 @@ on:
   workflow_call:
   workflow_dispatch:
 
+env:
+  should_push: ${{ github.ref == 'refs/heads/main' }}
+
 jobs:
   swarm-monitor-build:
     name: Build Swarm Monitor
