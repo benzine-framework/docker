@@ -6,7 +6,7 @@ LABEL maintainer="Matthew Baggett <matthew@baggett.me>" \
 USER root
 # ts:skip=AC_DOCKER_0002 Mis-detecting usage of apt instead of apt-get
 # Install nginx, certbot
-RUN adduser -D bouncer && \
+RUN adduser bouncer && \
     apt-get -qq update && \
     # Install pre-dependencies to use apt-key.
     apt-get -yqq install --no-install-recommends \
@@ -78,6 +78,9 @@ VOLUME /var/log/bouncer
 EXPOSE 80
 EXPOSE 443
 
+# Down-privelege to bouncer
+USER bouncer
+
 # Install Composer dependencies even though we don't need to, it should be done in the build process
 RUN composer install
 
@@ -92,9 +95,6 @@ ARG GIT_COMMIT_MESSAGE
 ENV BUILD_DATE=${BUILD_DATE} \
     GIT_SHA=${GIT_SHA} \
     GIT_COMMIT_MESSAGE=${GIT_COMMIT_MESSAGE}
-
-# Down-privelege to bouncer
-USER bouncer
 
 FROM benzine/php:nginx-8.1 as test-app-a
 COPY ./test/public-web-a /app/public
