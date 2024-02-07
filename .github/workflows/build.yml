@@ -84,14 +84,14 @@ jobs:
       contents: read
       packages: write
 
-  node:
-    needs: marshall
-    name: Node
-    uses: ./.github/workflows/node.yml
-    secrets: inherit
-    permissions:
-      contents: read
-      packages: write
+  #node:
+  #  needs: marshall
+  #  name: Node
+  #  uses: ./.github/workflows/node.yml
+  #  secrets: inherit
+  #  permissions:
+  #    contents: read
+  #    packages: write
 
   redis:
     needs: qc
@@ -136,7 +136,7 @@ jobs:
       - mitm-proxy
       - mqtt
       - mysql-proxy
-      - node
+      #  - node
       - php
       - redis
       - swarm-monitor

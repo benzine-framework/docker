@@ -73,4 +73,4 @@ jobs:
             NODE_VERSION=${{ matrix.node }}
             YARN_VERSION=${{ matrix.yarn }}
           build-contexts: |
-            marshall:build=docker-image://ghcr.io/benzine-framework/marshall:latest
+            marshall:build=docker-image://ghcr.io/benzine-framework/marshall:focal

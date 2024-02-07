@@ -62,4 +62,4 @@ jobs:
           cache-from: ${{ !env.ACT && 'type=gha' || '' }}
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || '' }}
           build-contexts: |
-            marshall:version=docker-image://ghcr.io/benzine-framework/marshall:latest
+            marshall:version=docker-image://ghcr.io/benzine-framework/marshall:focal
