@@ -92,3 +92,12 @@ jobs:
           cache-to: ${{ !env.ACT && 'type=gha,mode=max' || 'type=local,dest=/tmp' }}
           build-contexts: |
             php:cli=docker-image://ghcr.io/benzine-framework/php:cli-8.2
+
+      - name: "Validate build"
+        shell: bash
+        run: |
+          docker \
+            run \
+              --rm \
+              ghcr.io/benzine-framework/bouncer:latest \
+                /usr/bin/install-report
