@@ -147,7 +147,7 @@ jobs:
         id: build_args
         with:
           result-encoding: string
-          script: return `PHP_VERSION=${{ matrix.version }}
+          script: return `PHP_VERSION=${{ matrix.version }}`
 
       - uses: actions/checkout@v4
         with:
