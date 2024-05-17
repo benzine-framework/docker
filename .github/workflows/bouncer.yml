@@ -59,14 +59,14 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: matthewbaggett
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: "Setup: Login to GHCR"
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: matthewbaggett
-          password: ${{ secrets.GHCR_PASSWORD }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Setup: Find Composer Cache Directory"
         id: composer-cache

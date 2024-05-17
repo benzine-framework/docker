@@ -26,7 +26,7 @@ jobs:
         name: Login to Docker Hub
         with:
           username: matthewbaggett
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - uses: docker/build-push-action@v3
         name: Build Octoprint
         with:
@@ -48,14 +48,14 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: matthewbaggett
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: "Setup: Login to GHCR"
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: matthewbaggett
-          password: ${{ secrets.GHCR_PASSWORD }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v3
         name: Build Octoprint MJPG Streamer Variant
         with:
